@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    labelText: "Altura (m)",
+                    labelText: "Altura (cm)",
                     labelStyle: TextStyle(color: Colors.blueAccent)),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.blueAccent, fontSize: 25.0),
@@ -102,11 +102,10 @@ class _HomeState extends State<Home> {
     String _imagem = "";
 
     double peso = double.parse(pesoController.text);
-    double altura = double.parse(alturaController.text);
+    double altura = double.parse(alturaController.text)/100;
 
     double imc = peso / (altura * altura);
-    //debugPrint("Peso ${peso} e altura ${altura}");
-    //debugPrint("$imc");
+    
     if (imc < 18.6) {
       _texto = "Abaixo do peso (${imc.toStringAsPrecision(4)})";
       _imagem = "imagens/thin.png";
@@ -115,7 +114,7 @@ class _HomeState extends State<Home> {
       _imagem = "imagens/shape.png";
     } else if (imc >= 24.9 && imc < 29.9) {
       _texto = "Levemente acima do peso (${imc.toStringAsPrecision(4)})";
-      _imagem = "imagens/fat.jpg";
+      _imagem = "imagens/kindaFat.png";
     } else if (imc >= 29.9 && imc < 34.9) {
       _texto = "Obesidade Grau I (${imc.toStringAsPrecision(4)})";
       _imagem = "imagens/fat.jpg";
