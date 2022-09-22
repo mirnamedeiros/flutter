@@ -62,8 +62,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - imagens/kindaFat.png
-    - imagens/fat.jpg
-    - imagens/shape.png
+    - imagens/fat.png
+    - imagens/inShape.png
     - imagens/thin.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
