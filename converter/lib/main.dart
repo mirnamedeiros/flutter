@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-const request = "https://api.hgbrasil.com/finance?format=json-cors&key=9eed0cc9";
+const request = "https://api.hgbrasil.com/finance?format=json-cors&key=2cddc711";
 
 void main() async {
   runApp(MaterialApp(
@@ -13,7 +13,7 @@ void main() async {
 }
 
 Future<Map> getData() async {
-  http.Response response = await http.get(request);
+  http.Response response = await http.get(Uri.parse(request));
   return json.decode(response.body);
 }
 
@@ -27,8 +27,8 @@ class _HomeState extends State<Home> {
   final eurocontroller = TextEditingController();
   final realController = TextEditingController();
 
-  double dolar;
-  double euro;
+  double dolar = 0;
+  double euro = 0;
 
   void _realChange(String text) {
     if(text.isEmpty) {
@@ -77,9 +77,61 @@ class _HomeState extends State<Home> {
       body: FutureBuilder<Map> (
         future: getData(),
         builder: (context, snapshot) {
-          
-        }),
-      ),
-    );
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return const Center (
+                child: Text(
+                  "Caregando dados...",
+                  style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+            default:
+              if(snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    "Erro ao caregar dados...",
+                    style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                  textAlign: TextAlign.center,
+                ));
+              } else {
+                dolar = snapshot.data!["results"]["currencies"]["USD"]["buy"];
+                euro = snapshot.data!["results"]["currencies"]["EUR"]["buy"];
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const Icon(Icons.monetization_on,
+                        size: 150.0, color: Colors.amber),
+                      buildTextFormField(
+                        "Reais", "R\$", realController, _realChange),
+                      const Divider(),
+                      buildTextFormField(
+                        "Dólar", "R\$", dolarController, _dolarChange),
+                      const Divider(),
+                      buildTextFormField(
+                        "euro", "R\$", eurocontroller, _euroChance),
+                    ],
+                  ),
+                );
+              }
+          }
+        }));
   }
+}
+
+Widget buildTextFormField (String label, String prefix, TextEditingController controller, Function f) {
+  return TextField(
+    onChanged: (value) => f(value),
+    controller: controller,
+    decoration: InputDecoration(
+      labelText:  label, 
+      labelStyle:  const TextStyle(color: Colors.amber),
+      border:  const OutlineInputBorder(),
+      prefixText: "$prefix "),
+    style: const TextStyle(color: Colors.amber, fontSize: 25.0),
+    keyboardType: const TextInputType.numberWithOptions(decimal:true),
+  );
 }
